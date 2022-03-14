@@ -85,24 +85,21 @@ for n in weatherData['date']:
 #print(weatherData.loc[[6]])
 
 snowDay = pd.get_dummies(weatherData['Snow Day'], drop_first=True)
-print(snowDay.head())
 weatherData = pd.concat([weatherData,snowDay], axis=1)
 
-weatherData.drop(['Snow Day', 'sunrise', 'sunset', 'moonrise', 'moonset', 'moon_phase', 'moon_illumination', 'date', 'maxtempF', 'mintempF', 'avgtempF', 'windspeedMiles', 'sunhour', 'winddirdegree', 'winddir16point', 'weatherCode', 'weatherIconUrl', 'weatherDesc', 'visibilityMiles', 'pressureInches', 'HeatIndexF', 'DewPointF', 'WindChillF', 'WindGustMiles', 'FeelsLikeF', 'uvIndex', 'loc_id', 'totalprecipIn'], axis=1,inplace=True)
+weatherData.drop(['Snow Day', 'sunrise', 'sunset', 'moonrise', 'moonset', 'moon_phase', 'moon_illumination', 'date', 'maxtempF', 'mintempF', 'avgtempF', 'windspeedMiles', 'sunhour', 'winddirdegree', 'winddir16point', 'weatherCode', 'weatherIconUrl', 'weatherDesc', 'visibilityMiles', 'pressureInches', 'HeatIndexF', 'DewPointF', 'WindChillF', 'WindGustMiles', 'FeelsLikeF', 'uvIndex', 'loc_id', 'totalprecipIn', 'maxtempC', 'mintempC'], axis=1,inplace=True)
 
 X = weatherData.drop('True', axis=1)
 y = weatherData['True']
 
-nullMap = sns.heatmap(weatherData.isnull(),yticklabels=False,cbar=False,cmap='viridis')
-plt.show(nullMap)
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
 
-# from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression
 
-# logmodel = LogisticRegression()
+logmodel = LogisticRegression()
 
-# logmodel.fit(X_test,y_train)
-# prediction = logmodel.predict(X_test)
+logmodel.fit(X_train,y_train)
+prediction = logmodel.predict(X_test)
 
-# from sklearn.metrics import classification_report
-# print(classification_report(y_test, prediction))
+from sklearn.metrics import classification_report
+print(classification_report(y_test, prediction))

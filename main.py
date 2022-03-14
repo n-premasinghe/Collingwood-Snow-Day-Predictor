@@ -1,7 +1,11 @@
 # Importing libraries
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import viridis
 import pandas as pd
-import numpy as np
+import seaborn as sns
 from sklearn.model_selection import train_test_split
+
 # Reading data stored in spreadsheets.
 snowDaysRaw = pd.read_excel('SCSTC_SchoolBus_user_tweets.xlsx')
 weatherData = pd.read_csv('weather_data_24hr.csv')
@@ -82,5 +86,23 @@ for n in weatherData['date']:
 
 snowDay = pd.get_dummies(weatherData['Snow Day'], drop_first=True)
 print(snowDay.head())
+weatherData = pd.concat([weatherData,snowDay], axis=1)
 
-#trainingData, testingData = train_test_split(weatherData, test_size=0.3, random_state=25)
+weatherData.drop(['Snow Day', 'sunrise', 'sunset', 'moonrise', 'moonset', 'moon_phase', 'moon_illumination', 'date', 'maxtempF', 'mintempF', 'avgtempF', 'windspeedMiles', 'sunhour', 'winddirdegree', 'winddir16point', 'weatherCode', 'weatherIconUrl', 'weatherDesc', 'visibilityMiles', 'pressureInches', 'HeatIndexF', 'DewPointF', 'WindChillF', 'WindGustMiles', 'FeelsLikeF', 'uvIndex', 'loc_id', 'totalprecipIn'], axis=1,inplace=True)
+
+X = weatherData.drop('True', axis=1)
+y = weatherData['True']
+
+nullMap = sns.heatmap(weatherData.isnull(),yticklabels=False,cbar=False,cmap='viridis')
+plt.show(nullMap)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+# from sklearn.linear_model import LogisticRegression
+
+# logmodel = LogisticRegression()
+
+# logmodel.fit(X_test,y_train)
+# prediction = logmodel.predict(X_test)
+
+# from sklearn.metrics import classification_report
+# print(classification_report(y_test, prediction))

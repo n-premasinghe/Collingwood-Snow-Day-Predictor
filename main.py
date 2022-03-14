@@ -1,7 +1,7 @@
 # Importing libraries
 import pandas as pd
 import numpy as np
-
+from sklearn.model_selection import train_test_split
 # Reading data stored in spreadsheets.
 snowDaysRaw = pd.read_excel('SCSTC_SchoolBus_user_tweets.xlsx')
 weatherData = pd.read_csv('weather_data_24hr.csv')
@@ -52,19 +52,19 @@ for t in snowDaysRaw['Text']:
         snowDayTweets.append(t)
         
         tweetDate = str(snowDaysRaw.loc[snowDaysRaw['Text'] == t, 'UTC'])
-        print(dateClean(tweetDate))
+        #print(dateClean(tweetDate))
         snowDayTweetDates.append(dateClean(tweetDate))
         
     elif all(x in t for x in keywordsAll):
         snowDayTweets.append(t)
         
         tweetDate = str(snowDaysRaw.loc[snowDaysRaw['Text'] == t, 'UTC'])
-        print(dateClean(tweetDate))
+        #print(dateClean(tweetDate))
         snowDayTweetDates.append(dateClean(tweetDate))
 
 
-print(len(snowDayTweets))
-print(len(snowDayTweetDates))
+#print(len(snowDayTweets))
+#print(len(snowDayTweetDates))
 
 #snowDaysClean = pd.DataFrame(list(zip(snowDayTweets, snowDayTweetDates)), columns=['Tweet', 'Snow Days Date'])
 
@@ -78,4 +78,9 @@ for n in weatherData['date']:
         else:
             pass
 
-print(weatherData.loc[[6]])
+#print(weatherData.loc[[6]])
+
+snowDay = pd.get_dummies(weatherData['Snow Day'], drop_first=True)
+print(snowDay.head())
+
+#trainingData, testingData = train_test_split(weatherData, test_size=0.3, random_state=25)

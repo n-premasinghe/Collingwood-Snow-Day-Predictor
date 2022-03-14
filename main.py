@@ -66,6 +66,16 @@ for t in snowDaysRaw['Text']:
 print(len(snowDayTweets))
 print(len(snowDayTweetDates))
 
-snowDaysClean = pd.DataFrame(list(zip(snowDayTweets, snowDayTweetDates)), columns=['Tweet', 'Snow Days Date'])
+#snowDaysClean = pd.DataFrame(list(zip(snowDayTweets, snowDayTweetDates)), columns=['Tweet', 'Snow Days Date'])
 
-print(snowDaysClean.head())
+# Add column to specify whether or not a day was a snow day.
+weatherData['Snow Day'] = "False"
+
+for n in weatherData['date']:
+    for d in snowDayTweetDates:
+        if d == n:
+            weatherData.loc[weatherData['date'] == n, 'Snow Day'] = "True"
+        else:
+            pass
+
+print(weatherData.loc[[6]])

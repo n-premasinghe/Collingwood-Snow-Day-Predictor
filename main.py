@@ -67,7 +67,7 @@ for t in snowDaysRaw['Text']:
         snowDayTweetDates.append(dateClean(tweetDate))
 
 
-#print(len(snowDayTweets))
+print(len(snowDayTweets))
 #print(len(snowDayTweetDates))
 
 #snowDaysClean = pd.DataFrame(list(zip(snowDayTweets, snowDayTweetDates)), columns=['Tweet', 'Snow Days Date'])
@@ -87,12 +87,13 @@ for n in weatherData['date']:
 snowDay = pd.get_dummies(weatherData['Snow Day'], drop_first=True)
 weatherData = pd.concat([weatherData,snowDay], axis=1)
 
-weatherData.drop(['Snow Day', 'sunrise', 'sunset', 'moonrise', 'moonset', 'moon_phase', 'moon_illumination', 'date', 'maxtempF', 'mintempF', 'avgtempF', 'windspeedMiles', 'sunhour', 'winddirdegree', 'winddir16point', 'weatherCode', 'weatherIconUrl', 'weatherDesc', 'visibilityMiles', 'pressureInches', 'HeatIndexF', 'DewPointF', 'WindChillF', 'WindGustMiles', 'FeelsLikeF', 'uvIndex', 'loc_id', 'totalprecipIn', 'maxtempC', 'mintempC'], axis=1,inplace=True)
+weatherData.drop(['Snow Day', 'sunrise', 'sunset', 'moonrise', 'moonset', 'moon_phase', 'moon_illumination', 'date', 'maxtempF', 'mintempF', 'avgtempF', 'windspeedMiles', 'sunhour', 'winddirdegree', 'winddir16point', 'weatherCode', 'weatherIconUrl', 'weatherDesc', 'visibilityMiles', 'pressureInches', 'HeatIndexF', 'DewPointF', 'WindChillF', 'WindGustMiles', 'FeelsLikeF', 'uvIndex', 'loc_id', 'totalprecipIn', 'windspeedKmph', 'humidity', 'pressureMB', 'HeatIndexC', 'DewPointC', 'WindChillC', 'cloudcover', 'WindGustKmph', 'FeelsLikeC'], axis=1,inplace=True)
 
-X = weatherData.drop('True', axis=1)
 y = weatherData['True']
+X = weatherData.drop('True', axis=1)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=78)
 
 from sklearn.linear_model import LogisticRegression
 
@@ -103,3 +104,6 @@ prediction = logmodel.predict(X_test)
 
 from sklearn.metrics import classification_report
 print(classification_report(y_test, prediction))
+
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_test, prediction))

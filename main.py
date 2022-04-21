@@ -1,4 +1,6 @@
 # Importing libraries
+from urllib import response
+import requests, json
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import viridis
@@ -110,4 +112,18 @@ print(classification_report(y_test, prediction))
 from sklearn.metrics import confusion_matrix
 print(confusion_matrix(y_test, prediction))
 
-#print(logmodel.predict([[],[]]))
+finalLogModel = LogisticRegression()
+
+finalLogModel.fit(X, y)
+
+apiKey = "6d314c43e9ea38644a2012239e8a8559"
+
+URL = "https://api.openweathermap.org/data/2.5/weather?lat=44.5027226&lon=-80.2172379&appid=" + apiKey
+
+weatherResponse = requests.get(URL)
+
+if weatherResponse.status_code == 200:
+    currWeather = pd.DataFrame.from_dict(weatherResponse.json())
+    print(currWeather)
+else:
+    print("error in the http request")

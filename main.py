@@ -5,12 +5,12 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import viridis
 import pandas as pd
-import seaborn as sns
+
 from sklearn.model_selection import train_test_split
 
 # Reading data stored in spreadsheets.
 snowDaysRaw = pd.read_excel('SCSTC_SchoolBus_user_tweets.xlsx')
-weatherData = pd.read_csv('weather_data_24hr.csv')
+weatherData = pd.read_csv('weather_data_24hr(backup).csv')
 snowDaysRaw.head()
 
 # Sorting to make more readable.
@@ -68,8 +68,6 @@ for t in snowDaysRaw['Text']:
         #print(dateClean(tweetDate))
         snowDayTweetDates.append(dateClean(tweetDate))
 
-
-print(len(snowDayTweets))
 #print(len(snowDayTweetDates))
 
 #snowDaysClean = pd.DataFrame(list(zip(snowDayTweets, snowDayTweetDates)), columns=['Tweet', 'Snow Days Date'])
@@ -90,12 +88,10 @@ snowDay = pd.get_dummies(weatherData['Snow Day'], drop_first=True)
 weatherDesc = pd.get_dummies(weatherData['weatherDesc'])
 weatherData = pd.concat([weatherData,snowDay,weatherDesc], axis=1)
 
-weatherData.drop(['Snow Day', 'sunrise', 'sunset', 'moonrise', 'moonset', 'moon_phase', 'moon_illumination', 'date', 'maxtempF', 'mintempF', 'avgtempF', 'windspeedMiles', 'sunhour', 'winddirdegree', 'winddir16point', 'weatherCode', 'weatherIconUrl', 'weatherDesc', 'visibilityMiles', 'pressureInches', 'HeatIndexF', 'DewPointF', 'WindChillF', 'WindGustMiles', 'FeelsLikeF', 'uvIndex', 'loc_id', 'totalprecipIn', 'windspeedKmph', 'humidity', 'pressureMB', 'HeatIndexC', 'DewPointC', 'WindChillC', 'cloudcover', 'WindGustKmph', 'FeelsLikeC'], axis=1,inplace=True)
+#weatherData.drop(['Snow Day', 'sunrise', 'sunset', 'moonrise', 'moonset', 'moon_phase', 'moon_illumination', 'date', 'maxtempF', 'mintempF', 'avgtempF', 'windspeedMiles', 'sunhour', 'winddirdegree', 'winddir16point', 'weatherCode', 'weatherIconUrl', 'weatherDesc', 'visibilityMiles', 'pressureInches', 'HeatIndexF', 'DewPointF', 'WindChillF', 'WindGustMiles', 'FeelsLikeF', 'uvIndex', 'loc_id', 'totalprecipIn', 'windspeedKmph', 'humidity', 'pressureMB', 'HeatIndexC', 'DewPointC', 'WindChillC', 'cloudcover', 'WindGustKmph', 'FeelsLikeC'], axis=1,inplace=True)
 
 y = weatherData['True']
 X = weatherData.drop('True', axis=1)
-
-print(weatherData.head())
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=78)
 
@@ -118,12 +114,17 @@ finalLogModel.fit(X, y)
 
 apiKey = "6d314c43e9ea38644a2012239e8a8559"
 
-URL = "https://api.openweathermap.org/data/2.5/weather?lat=44.5027226&lon=-80.2172379&appid=" + apiKey
+URL = "https://api.openweathermap.org/data/2.5/weather?lat=44.5027226&lon=-80.2172379&exclude=minutely,hourly,daily,alerts&units=metric&appid=" + apiKey
 
 weatherResponse = requests.get(URL)
 
 if weatherResponse.status_code == 200:
-    currWeather = pd.DataFrame.from_dict(weatherResponse.json())
-    print(currWeather)
+    #currWeather = pd.DataFrame.from_dict(weatherResponse.json())
+    data = weatherResponse.json()
+    currWeather = pd.json_normalize(data['main'])
+    currWeather.drop(["current"]['weather', 'dt', 'sunrise', 'sunset', 'uvi'], axis=1, inplace=True)
+    print(currWeather.head())
+    #currWeather.drop(['Snow Day', 'sunrise', 'sunset', 'moonrise', 'moonset', 'moon_phase', 'moon_illumination', 'date', 'maxtempF', 'mintempF', 'avgtempF', 'windspeedMiles', 'sunhour', 'winddirdegree', 'winddir16point', 'weatherCode', 'weatherIconUrl', 'weatherDesc', 'visibilityMiles', 'pressureInches', 'HeatIndexF', 'DewPointF', 'WindChillF', 'WindGustMiles', 'FeelsLikeF', 'uvIndex', 'loc_id', 'totalprecipIn', 'windspeedKmph', 'humidity', 'pressureMB', 'HeatIndexC', 'DewPointC', 'WindChillC', 'cloudcover', 'WindGustKmph', 'FeelsLikeC'], axis=1,inplace=True)
+    finalLogModel.predict(currWeather)
 else:
     print("error in the http request")
